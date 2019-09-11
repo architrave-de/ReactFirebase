@@ -1,0 +1,8 @@
+@import './colors';
+@import './variables';
+
+body {
+    font-family: $body-font-family;
+    font-weight: lighter;
+    margin: 0;
+}
