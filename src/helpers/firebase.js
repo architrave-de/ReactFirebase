@@ -1,7 +1,8 @@
-import app from 'firebase/app'
+import * as firebase from 'firebase'
+import 'firebase/firestore';
+import {firebaseConfig} from './configs'
 
-export class Firebase {
-    constructor(config) {
-        app.initializeApp(config)
-    }
-}
+
+firebase.initializeApp(firebaseConfig)
+
+export const DB = firebase.firestore()
