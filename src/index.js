@@ -3,12 +3,9 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import './theme/index.scss'
 import * as serviceWorker from './serviceWorker'
-import {firebaseConfig} from './helpers/configs'
-import {Firebase} from './helpers/firebase'
 
 const initApp = () => {
-        new Firebase(firebaseConfig)
-        return <App/>
+        return <App />
 }
 
 ReactDOM.render(initApp(), document.getElementById('root'))
