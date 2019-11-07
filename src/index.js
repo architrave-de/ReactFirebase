@@ -3,12 +3,17 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import './theme/index.scss'
 import * as serviceWorker from './serviceWorker'
+import APIcall from './helpers/API'
 
 const initApp = () => {
-        return <App />
+        const databaseCollections = APIcall.dbCollectinos()
+        APIcall.getAppManifest(databaseCollections.appManifest).then(data => data[0])
+        .then(data => ReactDOM.render(<App name={data.name}/>, document.getElementById('root')))
 }
 
-ReactDOM.render(initApp(), document.getElementById('root'))
+initApp()
+
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
