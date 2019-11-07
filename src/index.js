@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import './theme/index.scss'
 import * as serviceWorker from './serviceWorker'
-import APIcall from './helpers/API'
+import apiCall from './helpers/API'
 
 const initApp = () => {
-        const databaseCollections = APIcall.dbCollectinos()
-        APIcall.getAppManifest(databaseCollections.appManifest).then(data => data[0])
+        const databaseCollections = apiCall.dbCollection()
+        apiCall.getAppManifest(databaseCollections.appManifest).then(data => data[0])
         .then(data => ReactDOM.render(<App name={data.name}/>, document.getElementById('root')))
 }
 
