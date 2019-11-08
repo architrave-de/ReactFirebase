@@ -4,6 +4,7 @@ import App from './App'
 import './theme/index.scss'
 import * as serviceWorker from './serviceWorker'
 import apiCall from './helpers/API'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const initApp = () => {
         const databaseCollections = apiCall.dbCollection()
