@@ -1,0 +1,42 @@
+.cards-group {
+  .card {
+    background-image: linear-gradient(
+      to top,
+      rgba(0, 6, 7, 0.9),
+      rgba(2, 45, 56, 0.733)
+    );
+    color: white;
+    transition: all 0.1s ease-in-out;
+    &:hover {
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+    &-1 {
+      transform: scale(1.05);
+      z-index: 10;
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+  &__image-wrapper {
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: center;
+
+    .card-img-top {
+      width: 148px !important;
+    }
+  }
+
+  .card-body {
+    padding: 0px !important;
+    .card-title {
+      padding: 3px 7px;
+      background: rgba(128, 128, 128, 0.123);
+      clip-path: polygon(0% 0, 100% 0%, 93% 100%, 0 100%);
+      margin-right: 14px;
+      color: #d3d3d38a;
+    }
+  }
+}
