@@ -1,8 +1,14 @@
 @import './colors';
 @import './variables';
+@import url('https://fonts.googleapis.com/css?family=Graduate&display=swap');
 
+html,
 body {
-    font-family: $body-font-family;
-    font-weight: lighter;
-    margin: 0;
+  font-family: $body-font-family !important;
+  font-weight: lighter;
+  margin: 0;
+}
+
+#id {
+  font-family: $body-font-family !important;
 }
