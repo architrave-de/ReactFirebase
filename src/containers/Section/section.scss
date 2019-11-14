@@ -1,0 +1,25 @@
+@import '../../theme/_colors.scss';
+.section-wrapper {
+  background-image: url('../../assets/svgs/ping_pong.svg');
+  background-repeat: no-repeat;
+
+  .section {
+    &__title {
+      color: $cyan-300 !important;
+      text-align: center;
+      padding: 28px 14px;
+    }
+
+    &--black {
+      border-radius: 0 !important;
+      margin: 0px !important;
+      background: rgb(0, 0, 0);
+      background: linear-gradient(
+        317deg,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 1) 50%,
+        rgba(0, 0, 0, 0.7) 100%
+      );
+    }
+  }
+}
