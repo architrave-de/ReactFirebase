@@ -16,7 +16,7 @@ export default class NavBar extends React.Component {
     const self = this
     const databaseCollections = apiCall.dbCollection()
     apiCall.getCollectionData(databaseCollections.sections).then(data => {
-      var sections = []
+      let sections = []
       data.forEach(item => sections.push(item))
       self.setState({ appSections: sections })
       return sections
