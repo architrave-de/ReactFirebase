@@ -9,43 +9,87 @@ import second from '../../assets/svgs/second.svg'
 import third from '../../assets/svgs/third.svg'
 import PropTypes from 'prop-types'
 import './cards-group.scss'
+import { DB } from '../../helpers/firebase'
+import { dayToYear, dayWithYearNumber } from '../../helpers/timeFunctions'
 
 export default class CardsGroup extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      dayMatches: []
+    }
+  }
+
+  componentDidMount() {
+    const todayNumber = dayWithYearNumber({ day: dayToYear({}) })
+    const self = this
+    DB.collection('days')
+      .where('dayNumber', '==', todayNumber)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(function(doc) {
+          self.setState({
+            dayMatches: [...self.state.dayMatches, doc.data()]
+          })
+        })
+      })
+      .catch(error => {
+        console.log('Error getting the results: ', error)
+      })
+  }
+
+  card = (card, index, cardImages) => {
+    return (
+      <Card className={`card-${card.position}`} key={index}>
+        <div className="cards-group__image-wrapper">
+          <Card.Img variant="top" src={cardImages[index]} />
+        </div>
+        <Card.Body>
+          {card.rounds.length >= 1 ? (
+            card.rounds.map((round, i) => (
+              <div key={i}>
+                <Card.Title>{round.description}</Card.Title>
+                <ul>
+                  <li>{round.players && round.players[card.position].name}</li>
+                </ul>
+              </div>
+            ))
+          ) : (
+            <>
+              <Card.Title>there is no data</Card.Title>
+            </>
+          )}
+        </Card.Body>
+        <Card.Footer>
+          {card.rounds.length >= 1 && (
+            <small className="text-muted">Last updated 3 mins ago</small>
+          )}
+        </Card.Footer>
+      </Card>
+    )
   }
 
   render() {
+    const cards = this.props.cards
+    if (this.state.dayMatches[0]) {
+      cards.map(card => {
+        card.rounds = this.state.dayMatches[0].rounds
+      })
+    }
+
     const cardImages = [second, first, third]
     return (
       <>
         <Container className="cards-group">
           <Row>
+            }
             <Col md={{ span: 10, offset: 1 }}>
               <CardDeck>
-                {this.props.cards.map((card, index) => (
-                  <Card className={`card-${card.position}`} key={index}>
-                    <div className="cards-group__image-wrapper">
-                      <Card.Img variant="top" src={cardImages[index]} />
-                    </div>
-                    <Card.Body>
-                      {card.rounds.map((round, i) => (
-                        <div key={i}>
-                          <Card.Title>{round.name}</Card.Title>
-                          <ul>
-                            <li>{round.winner}</li>
-                          </ul>
-                        </div>
-                      ))}
-                    </Card.Body>
-                    <Card.Footer>
-                      <small className="text-muted">
-                        Last updated 3 mins ago
-                      </small>
-                    </Card.Footer>
-                  </Card>
-                ))}
+                {cards.forEach(card => {
+                  if (card.rounds.length < 1) {
+                  }
+                })}
+                {cards.map((card, index) => this.card(card, index, cardImages))}
               </CardDeck>
             </Col>
           </Row>
@@ -61,44 +105,8 @@ CardsGroup.propTypes = {
 
 CardsGroup.defaultProps = {
   cards: [
-    {
-      position: 2,
-      rounds: [
-        {
-          name: 'Round one',
-          winner: 'Ali'
-        },
-        {
-          name: 'Round Two',
-          winner: 'Chris'
-        }
-      ]
-    },
-    {
-      position: 1,
-      rounds: [
-        {
-          name: 'Round one',
-          winner: 'Anne'
-        },
-        {
-          name: 'Round Two',
-          winner: 'Lilly'
-        }
-      ]
-    },
-    {
-      position: 3,
-      rounds: [
-        {
-          name: 'Round one',
-          winner: 'Mike'
-        },
-        {
-          name: 'Round Two',
-          winner: 'John'
-        }
-      ]
-    }
+    { position: 2, rounds: [] },
+    { position: 1, rounds: [] },
+    { position: 3, rounds: [] }
   ]
 }
