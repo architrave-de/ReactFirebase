@@ -3,20 +3,29 @@ import Table from 'react-bootstrap/Table'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
-import apiCall from '../../helpers/API'
+import { DB } from '../../helpers/firebase'
+import { dayToYear } from '../../helpers/timeFunctions'
 
-export default class Players extends React.Component {
+export default class TableBoard extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      players: []
+      players: [],
+      month: null
     }
   }
 
   componentDidMount() {
+    const currentDate = dayToYear({})
+    const yearMonth = currentDate.year
+      .toString()
+      .slice(-2)
+      .concat(currentDate.month.toString())
+    this.setState({ month: yearMonth })
+
     const self = this
-    apiCall.players
-      .orderBy('totalPoints', 'desc')
+    DB.collection('players')
+      .orderBy(`monthlyRecords.${yearMonth}`, 'desc')
       .get()
       .then(querySnapshot => {
         let players = []
@@ -33,7 +42,7 @@ export default class Players extends React.Component {
   }
 
   render() {
-    const { players } = this.state
+    const { players, month } = this.state
     return (
       <>
         <Container>
@@ -42,21 +51,22 @@ export default class Players extends React.Component {
               <Table striped bordered hover variant="dark">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Total points</th>
+                    <th>#</th>
+                    <th>First Name</th>
                     <th>Slack name</th>
+                    <th>Points</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {players.map((player, i) => (
-                    <tr key={i}>
-                      <td>{i + 1}</td>
-                      <td>{player.name}</td>
-                      <td>{player.totalPoints}</td>
-                      <td>{player.slackName}</td>
-                    </tr>
-                  ))}
+                  {players &&
+                    players.map((player, i) => (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        <td>{player.name}</td>
+                        <td>{player.slackName}</td>
+                        <td>{player.monthlyRecords[month]}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </Table>
             </Col>
