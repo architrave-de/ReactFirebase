@@ -39,14 +39,15 @@ export default class CardsGroup extends React.Component {
   }
 
   card = (card, index, cardImages) => {
+    const { rounds } = card
     return (
       <Card className={`card-${card.position}`} key={index}>
         <div className="cards-group__image-wrapper">
           <Card.Img variant="top" src={cardImages[index]} />
         </div>
         <Card.Body>
-          {card.rounds.length >= 1 ? (
-            card.rounds.map((round, i) => (
+          {rounds.length >= 1 ? (
+            rounds.map((round, i) => (
               <div key={i}>
                 <Card.Title>{round.description}</Card.Title>
                 <ul>
@@ -61,8 +62,8 @@ export default class CardsGroup extends React.Component {
           )}
         </Card.Body>
         <Card.Footer>
-          {card.rounds.length >= 1 && (
-            <small className="text-muted">Last updated 3 mins ago</small>
+          {rounds.length >= 1 && (
+            <small className="text-muted">{console.log(rounds[0])}</small>
           )}
         </Card.Footer>
       </Card>
@@ -73,7 +74,7 @@ export default class CardsGroup extends React.Component {
     const cards = this.props.cards
     if (this.state.dayMatches[0]) {
       cards.map(card => {
-        card.rounds = this.state.dayMatches[0].rounds
+        card.rounds = this.state.dayMatches[0].rounds || []
       })
     }
 
@@ -85,10 +86,11 @@ export default class CardsGroup extends React.Component {
             }
             <Col md={{ span: 10, offset: 1 }}>
               <CardDeck>
-                {cards.forEach(card => {
-                  if (card.rounds.length < 1) {
-                  }
-                })}
+                {!!cards &&
+                  cards.forEach(card => {
+                    if (card.rounds.length < 1) {
+                    }
+                  })}
                 {cards.map((card, index) => this.card(card, index, cardImages))}
               </CardDeck>
             </Col>
