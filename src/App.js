@@ -1,8 +1,7 @@
 import React from 'react'
 import HomePage from './containers/HomePage'
 
-
-export class App extends React.Component{
+export class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -12,13 +11,8 @@ export class App extends React.Component{
     }
   }
 
-  componentDidMount = () => {
-  }
-
   render() {
-    return (
-      <HomePage name={this.props.name}/>
-    )
+    return <HomePage name={this.props.name} />
   }
 }
 
