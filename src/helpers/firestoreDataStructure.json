@@ -1,0 +1,58 @@
+{
+  "days": {
+    "ID": {
+      "dayNumber": "19313",
+      "fullDay": "Tues 2 nov 2019",
+      "rounds": [
+        {
+          "round1": {
+            "description": "here is the round one description",
+            "players": {
+              "one": {
+                "name": "player one",
+                "id": "1",
+                "link": "player one link"
+              },
+              "two": {
+                "name": "player two",
+                "id": "2",
+                "link": "player two link"
+              },
+              "three": {
+                "name": "player three",
+                "id": "3",
+                "link": "player three link"
+              }
+            }
+          }
+        },
+        {
+          "round2": [
+            {
+              "description": "here is the round two description",
+              "players": [
+                {
+                  "one": {
+                    "name": "player one",
+                    "id": "1",
+                    "link": "player one link"
+                  },
+                  "two": {
+                    "name": "player two",
+                    "id": "2",
+                    "link": "player two link"
+                  },
+                  "three": {
+                    "name": "player three",
+                    "id": "3",
+                    "link": "player three link"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

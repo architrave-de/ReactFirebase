@@ -1,5 +1,5 @@
 import firebase from 'firebase/app'
-import 'firebase/firestore'
+import { firestone } from 'firebase/firestore'
 import { firebaseConfig } from './configs'
 
 firebase.initializeApp(firebaseConfig)
