@@ -3,6 +3,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import apiCall from '../../helpers/API'
 import './navbar.scss'
+import { Link } from 'react-router-dom'
 
 export default class NavBar extends React.Component {
   constructor(props) {
@@ -27,19 +28,27 @@ export default class NavBar extends React.Component {
     const sections = this.state.appSections
 
     return (
-      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand href="#home">{this.props.appName}</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="mr-auto">
-            {sections.map(item => (
-              <Nav.Link href={item.url} key={item.name}>
-                {item.name}
-              </Nav.Link>
-            ))}
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
+      <div className="app-navbar">
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+          <Navbar.Brand href="/">{this.props.appName}</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="mr-auto">
+              {sections.map(item => (
+                <Nav.Link href={item.url} key={item.name}>
+                  <Link
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    to={item.url}
+                  >
+                    {' '}
+                    {item.name}
+                  </Link>
+                </Nav.Link>
+              ))}
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
+      </div>
     )
   }
 }
