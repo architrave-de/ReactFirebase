@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Players from '../Players/Players'
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
@@ -10,11 +9,19 @@ import Card from 'react-bootstrap/Card'
 import Container from 'react-bootstrap/Container'
 import apiCall from '../../helpers/API'
 import AddRound from './AddRound/AddRound'
+import * as firebaseui from 'firebaseui'
+import firebase from 'firebase/app'
+import 'firebaseui/dist/firebaseui.css'
+import Spinner from 'react-bootstrap/Spinner'
+import { firebaseUiConfig } from '../../helpers/firebase'
 
 export default class ControlPanel extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      errMessage: null,
+      loading: true,
+      isUserLoggedIn: true,
       lastPlayerId: null,
       playerFields: {
         name: {
@@ -52,6 +59,7 @@ export default class ControlPanel extends React.Component {
   }
 
   componentDidMount() {
+    this.showLoginOptions({})
     apiCall
       .lastPlayerId()
       .then(id =>
@@ -61,6 +69,49 @@ export default class ControlPanel extends React.Component {
       )
       .catch(e => {
         console.log('the player id cant be generated')
+      })
+  }
+
+  showLoginOptions = () => {
+    const self = this
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        self.setState({
+          loading: false,
+          isUserLogged: true
+        })
+        const { email } = user
+        const emailDomain = email.substring(email.lastIndexOf('@') + 1)
+        if (emailDomain !== 'architrave') {
+        }
+      } else {
+        self.setState({
+          loading: false,
+          isUserLogged: false
+        })
+      }
+    })
+    // Initialize the FirebaseUI Widget using Firebase.
+    const ui =
+      firebaseui.auth.AuthUI.getInstance() ||
+      new firebaseui.auth.AuthUI(firebase.auth())
+
+    // The start method will wait until the DOM is loaded.
+    ui.start('#firebaseui-auth-container', firebaseUiConfig({}))
+  }
+
+  handleSignOut = ({ errMessage }) => {
+    const self = this
+    firebase
+      .auth()
+      .signOut()
+      .then(data => {
+        self.setState({
+          loading: true,
+          isUserLogged: false,
+          errMessage: errMessage
+        })
+        self.showLoginOptions({ uiExists: true })
       })
   }
 
@@ -76,16 +127,8 @@ export default class ControlPanel extends React.Component {
       .then(data => {})
   }
 
-  updatePlayerPoints = () => {
-    console.log('update player points')
-  }
-
-  updatePlayersPoints() {
-    console.log('update the players points')
-  }
-
   render() {
-    const { playerFields } = this.state
+    const { playerFields, isUserLogged, loading } = this.state
     const addPlayerForm = () => {
       return (
         <Form onSubmit={this.handleAddPlayer}>
@@ -103,27 +146,56 @@ export default class ControlPanel extends React.Component {
       )
     }
 
-    return (
-      <>
-        <Container>
-          <Row>
-            <Col md={{ span: 10, offset: 1 }}>
-              <AddRound />
-              <Accordion defaultActiveKey="0">
-                <Card>
-                  <Accordion.Toggle as={Card.Header} eventKey="1">
-                    Add Player
-                  </Accordion.Toggle>
-                  <Accordion.Collapse eventKey="1">
-                    <Card.Body>{addPlayerForm()}</Card.Body>
-                  </Accordion.Collapse>
-                </Card>
-              </Accordion>
-            </Col>
-          </Row>
-        </Container>
-      </>
+    const content = () => (
+      <Container>
+        <Row>
+          <Col md={{ span: 10, offset: 1 }}>
+            {isUserLogged ? (
+              <>
+                <Button variant="primary" onClick={this.handleSignOut}>
+                  sign out
+                </Button>
+                <AddRound />
+                <Accordion defaultActiveKey="0">
+                  <Card>
+                    <Accordion.Toggle as={Card.Header} eventKey="1">
+                      Add Player
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey="1">
+                      <Card.Body>{addPlayerForm()}</Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                </Accordion>
+              </>
+            ) : (
+              <Card className="text-left">
+                {!!loading && (
+                  <Button variant="primary" disabled>
+                    <Spinner
+                      as="span"
+                      animation="grow"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
+                    Loading...
+                  </Button>
+                )}
+                <Card.Header></Card.Header>
+                <Card.Body>
+                  <Card.Title>Please Login to continue ..</Card.Title>
+                  <Card.Text>
+                    <div id="firebaseui-auth-container"></div>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            )}
+          </Col>
+        </Row>
+      </Container>
     )
+
+    return <>{content()}</>
   }
 }
 
