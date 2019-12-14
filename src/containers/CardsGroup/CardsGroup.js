@@ -61,11 +61,7 @@ export default class CardsGroup extends React.Component {
             </>
           )}
         </Card.Body>
-        <Card.Footer>
-          {rounds.length >= 1 && (
-            <small className="text-muted">{console.log(rounds[0])}</small>
-          )}
-        </Card.Footer>
+        <Card.Footer></Card.Footer>
       </Card>
     )
   }

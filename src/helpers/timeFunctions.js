@@ -23,7 +23,6 @@ export function getMonthFirstLastDay({ monthDate = date }) {
  * @param {startDate} [date=today]
  */
 export function dayToYear({ startDate = date }) {
-  console.log('TCL: dayToYear -> date', date)
   const yearStartDay = new Date(date.getFullYear(), 0, 0)
   const diff =
     startDate -
