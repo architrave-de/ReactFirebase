@@ -8,14 +8,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 const initApp = () => {
   const databaseCollections = apiCall.dbCollection()
-  apiCall
-    .getCollectionData(databaseCollections.appManifest)
-    .then(data => {
-      ReactDOM.render(
-        <App name={data[0].name} />,
-        document.getElementById('root')
-      )
-    })
+  apiCall.getCollectionData(databaseCollections.appManifest).then(data => {
+    const name = data[0].name || 'app name'
+    ReactDOM.render(<App name={name} />, document.getElementById('root'))
+  })
 }
 
 initApp()
