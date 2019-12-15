@@ -1,6 +1,8 @@
 // fonts
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-$body-font-family: 'Graduate', cursive !default;
+@import url('https://fonts.googleapis.com/css?family=Ubuntu&display=swap');
+$body-font-family: 'Ubuntu', sans-serif !default;
+$headers-font-family: 'Graduate', cursive !default;
 $body-font-color: $black-100;
 $body-font-size: 14px;
 $body-letter-spacing: 1px;
