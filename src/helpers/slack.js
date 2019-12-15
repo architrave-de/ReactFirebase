@@ -12,7 +12,7 @@ const CHANNELS = {
  * @param {object} args - pass to action function
  */
 export const slackAction = async (action, args) => {
-  apiCall
+  return apiCall
     .getToken()
     .then(token => {
       return new Slack({
@@ -60,11 +60,14 @@ export const getChannelId = async (
   { channelName = CHANNELS.tableTennisTest },
   slackClient
 ) => {
-  return slackClient.channels.list({ channel: channelName }).then(data => {
-    const matchedChannel =
-      data.channels.filter(channel => channel.name === channelName)[0] || null
-    return matchedChannel.id
-  })
+  return slackClient.channels
+    .list({ channel: channelName })
+    .then(data => {
+      const matchedChannel =
+        data.channels.filter(channel => channel.name === channelName)[0] || null
+      return matchedChannel.id
+    })
+    .catch(err => console.error(err))
 }
 
 /**
@@ -85,9 +88,39 @@ export const getWorkspaceUsers = async slackClient => {
   })
 }
 
-export const importUsersFormChannel = async ({}, slackClient) => {
-  const channelId = await getChannelId({}, slackClient)
-  // const channelUsers = await (getChannelUsers({ channelId: channelId }),
-  // slackClient)
-  console.log('TCL: importUsersFormChannel -> channelUsers', channelId)
+/**
+ *
+ * @param {userId} string|| number - channel id
+ * @returns {object} - user infos
+ */
+const getUserData = ({ user }, slackClient) => {
+  return slackClient.users.info({ user }).then(data => {
+    return data.user
+  })
+}
+
+/**
+ *
+ * @param {channelName} string - slack channel name without (hash)
+ * @returns {array} - array of objects each represent a user infos
+ */
+export const importUsersFormChannel = async ({ channelName }, slackClient) => {
+  return getChannelId({}, slackClient)
+    .then(id => getChannelUsers({ channelId: id }, slackClient))
+    .then(users => {
+      let usersInfos = []
+      users.members.forEach(user =>
+        getUserData({ user }, slackClient).then(user => {
+          const { real_name, email, image_192 } = user.profile
+          usersInfos.push({
+            name: real_name,
+            email,
+            image: image_192,
+            slackName: user.name
+          })
+        })
+      )
+      return usersInfos
+    })
+    .catch(err => console.error(err))
 }
