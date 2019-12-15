@@ -1,7 +1,23 @@
 import { DB } from './firebase'
 import { dayToYear, dayWithYearNumber } from '../helpers/timeFunctions'
 import { firestore } from 'firebase'
+
 export class API {
+  getToken() {
+    return DB.collection(this.dbCollection().appManifest)
+      .get()
+      .then(collection => {
+        let dbValues = []
+        collection.forEach(doc => {
+          dbValues.push(doc.data())
+        })
+        return dbValues[0].slackToken
+      })
+      .catch(error => {
+        console.log('Error getting slackToken: ', error)
+      })
+  }
+
   getCollectionData(collection, orderBy, orderQuery) {
     const collectionData = orderBy
       ? DB.collection(collection).orderBy(orderBy, orderQuery)
@@ -145,3 +161,5 @@ export class API {
 
 const apiCall = new API()
 export default apiCall
+
+console.log(apiCall.getToken())
