@@ -57,15 +57,14 @@ export const sendMessageToChannel = (
  * @returns {string} - channel ID
  */
 export const getChannelId = async (
-  { channel = CHANNELS.tableTennisTest },
+  { channelName = CHANNELS.tableTennisTest },
   slackClient
 ) => {
-  const channels = await slackClient.channels
-    .list({ channel })
-    .then(data => data.channels)
-  const channelId =
-    (await channels.filter(channel => channel.name === channel[0].id)) || null
-  return channelId
+  return slackClient.channels.list({ channel: channelName }).then(data => {
+    const matchedChannel =
+      data.channels.filter(channel => channel.name === channelName)[0] || null
+    return matchedChannel.id
+  })
 }
 
 /**
@@ -84,4 +83,11 @@ export const getWorkspaceUsers = async slackClient => {
   return slackClient.users.list().then(data => {
     return data.members
   })
+}
+
+export const importUsersFormChannel = async ({}, slackClient) => {
+  const channelId = await getChannelId({}, slackClient)
+  // const channelUsers = await (getChannelUsers({ channelId: channelId }),
+  // slackClient)
+  console.log('TCL: importUsersFormChannel -> channelUsers', channelId)
 }
