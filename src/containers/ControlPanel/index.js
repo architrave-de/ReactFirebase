@@ -14,6 +14,7 @@ import firebase from 'firebase/app'
 import 'firebaseui/dist/firebaseui.css'
 import Spinner from 'react-bootstrap/Spinner'
 import { firebaseUiConfig } from '../../helpers/firebase'
+import LoginInfos from './LoginOptions/LoginInInfos'
 
 export default class ControlPanel extends React.Component {
   constructor(props) {
