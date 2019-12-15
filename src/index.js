@@ -10,11 +10,9 @@ const initApp = () => {
   const databaseCollections = apiCall.dbCollection()
   apiCall
     .getCollectionData(databaseCollections.appManifest)
-    .then(data => data[0])
     .then(data => {
-      let appManifest = data ? data : { name: 'Two Arcs' }
       ReactDOM.render(
-        <App name={appManifest.name} />,
+        <App name={data[0].name} />,
         document.getElementById('root')
       )
     })
