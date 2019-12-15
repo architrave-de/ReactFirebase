@@ -17,7 +17,7 @@
     "slack": "^11.0.2"
   },
   "scripts": {
-    "start": "react-scripts start --env.NODE_NEW=newkey",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint src/**/*.js"
