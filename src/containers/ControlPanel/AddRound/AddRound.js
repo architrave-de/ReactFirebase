@@ -2,7 +2,6 @@ import React from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
-import Jumbotron from 'react-bootstrap/Jumbotron'
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
@@ -12,6 +11,11 @@ import Alert from 'react-bootstrap/Alert'
 import Col from 'react-bootstrap/Col'
 import DatePicker from 'react-datepicker'
 import { dayToYear } from '../../../helpers/timeFunctions'
+import {
+  slackAction,
+  sendMessageToChannel,
+  formattedSlackMessage
+} from '../../../helpers/slack'
 import 'react-datepicker/dist/react-datepicker.css'
 
 export default class AddRound extends React.Component {
@@ -109,14 +113,17 @@ export default class AddRound extends React.Component {
     const scores = [0, 3, 2, 1]
     const { name, id } = e.target
     const position = name
-    // get the selected player and update it
+    // get the selected player
     const player = this.state.playersList.filter(player => player.id === id)[0]
-
-    const actualMonthlyPoints =
+    // set selected player monthly points
+    const currentMonthlyPoints =
       player.monthlyRecords[this.selectedMonthId(stateRound.date)] || 0
     player.monthlyRecords[this.selectedMonthId(stateRound.date)] =
-      actualMonthlyPoints + scores[position]
+      currentMonthlyPoints + scores[position]
+
+    //set selected player total point
     player.totalPoints = player.totalPoints + scores[position]
+
     //set the final player
     stateRound.players[position] = player
     this.setState({
@@ -136,8 +143,9 @@ export default class AddRound extends React.Component {
       <Card
         style={{ backgroundColor: 'white', margin: '14px 0', padding: '7px' }}
       >
-        <Jumbotron>
-          <h2>Add Round</h2>
+        <Alert variant="secondary">
+          <Alert.Heading>{this.props.title}</Alert.Heading>
+
           <hr></hr>
           <Form.Group controlId="roundDescription">
             <Form.Label>Give it a name</Form.Label>
@@ -206,12 +214,12 @@ export default class AddRound extends React.Component {
                 <br />
               </>
             )}
-            <Button variant="primary" type="submit">
+            <Button variant="outline-info" type="submit">
               Add Round
             </Button>
             <Form.Row></Form.Row>
           </Form>
-        </Jumbotron>
+        </Alert>
       </Card>
     )
   }
