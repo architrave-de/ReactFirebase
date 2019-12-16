@@ -48,6 +48,23 @@ export class API {
     return DB.collection(this.dbCollection().players)
   }
 
+  playerByEmail({ email }) {
+    return DB.collection(this.dbCollection().players)
+      .where('email', '==', email)
+      .get()
+      .then(playerEntry => {
+        console.log(playerEntry)
+        let players = []
+        playerEntry.forEach(function(doc) {
+          players.push({ id: doc.id, ...doc.data() })
+        })
+        return players[0]
+      })
+      .catch(error => {
+        console.log('Error getting player by email: ', error, email)
+      })
+  }
+
   get playersList() {
     return DB.collection(this.dbCollection().players)
       .orderBy('totalPoints', 'desc')
@@ -75,7 +92,6 @@ export class API {
   }
 
   addPlayer({
-    id,
     name,
     slackName,
     image,
@@ -84,7 +100,7 @@ export class API {
     totalPoints = 0
   }) {
     return DB.collection(this.dbCollection().players)
-      .doc(id)
+      .doc()
       .set({ name, slackName, image, monthlyRecords, email, totalPoints })
       .then(player => {
         console.log('the player has beed added')
@@ -93,6 +109,7 @@ export class API {
   }
 
   updatePlayer(player) {
+    console.log('TCL: API -> updatePlayer -> player', player)
     DB.collection(this.dbCollection().players)
       .doc(player.id)
       .set({ ...player })
