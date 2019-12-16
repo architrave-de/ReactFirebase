@@ -33,12 +33,15 @@ export default class SlackFunctions extends Component {
 
   handleImportUsers = () => {
     const self = this
+    this.setState({
+      processing: true
+    })
     this.state.channelUsers.forEach((item, i) => {
       item.email = item.email || 'no@email.here'
       self.handleAddPlayer(item)
     })
     this.setState({
-      processing: true,
+      processing: false,
       alert: true
     })
   }
