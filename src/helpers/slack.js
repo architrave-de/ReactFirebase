@@ -3,6 +3,7 @@ import apiCall from '../helpers/API'
 
 const CHANNELS = {
   tableTennis: '',
+  mainSport: 'archsports',
   tableTennisTest: 'test-bot-firebase'
 }
 
@@ -36,7 +37,7 @@ export const openConversation = async (
   return slackClient.conversations
     .open({ users: userId })
     .then(data => {
-      sendMessageToChannel({ channel: data.channel.id, text: 'new DM' })
+      sendMessageToChannel({ channelName: data.channel.id, text: 'new DM' })
     })
     .then(res => res)
     .catch(error => console.error())
@@ -48,9 +49,9 @@ export const openConversation = async (
  * @returns {string} - channel ID
  */
 export const sendMessageToChannel = (
-  { channel = CHANNELS.tableTennisTest, text },
+  { channelName = CHANNELS.tableTennisTest, text, blocks = [] },
   slackClient
-) => slackClient.chat.postMessage({ channel, text })
+) => slackClient.chat.postMessage({ channel: channelName, text, blocks })
 
 /**
  * @param {channel} string - channel name
@@ -71,7 +72,6 @@ export const getChannelId = async (
 }
 
 /**
- *
  * @param {channelId} string|| number - channel id
  * @returns {array} - channel members
  */
@@ -89,38 +89,93 @@ export const getWorkspaceUsers = async slackClient => {
 }
 
 /**
- *
+ * @returns {array} - all workspace members, including the inactive ones
+ */
+export const getWorkspaceChannels = ({}, slackClient) => {
+  return slackClient.channels.list().then(data => data.channels)
+}
+
+/**
  * @param {userId} string|| number - channel id
  * @returns {object} - user infos
  */
 const getUserData = ({ user }, slackClient) => {
-  return slackClient.users.info({ user }).then(data => {
-    return data.user
-  })
+  return slackClient.users.info({ user })
 }
 
 /**
- *
  * @param {channelName} string - slack channel name without (hash)
  * @returns {array} - array of objects each represent a user infos
  */
 export const importUsersFormChannel = async ({ channelName }, slackClient) => {
-  return getChannelId({}, slackClient)
-    .then(id => getChannelUsers({ channelId: id }, slackClient))
-    .then(users => {
-      let usersInfos = []
-      users.members.forEach(user =>
-        getUserData({ user }, slackClient).then(user => {
-          const { real_name, email, image_192 } = user.profile
-          usersInfos.push({
-            name: real_name,
-            email,
-            image: image_192,
-            slackName: user.name
-          })
-        })
-      )
-      return usersInfos
+  const channelId = await getChannelId({ channelName }, slackClient)
+  const channelUsers = await getChannelUsers(
+    { channelId: channelId },
+    slackClient
+  )
+  let users = []
+  channelUsers.members.forEach(async user => {
+    const userData = await getUserData({ user }, slackClient)
+    const { real_name, email, image_192 } = userData.user.profile
+    users.push({
+      slackName: userData.user.name,
+      name: real_name,
+      email,
+      image: image_192
     })
-    .catch(err => console.error(err))
+  })
+
+  return users
+}
+
+export const formattedSlackMessage = ({ round }) => {
+  const { players } = round
+  return [
+    {
+      type: 'divider'
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `${round.description}*\n`
+      }
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `* 1: ${players['1'].name}* :first_place_medal:\n got the first place with 3 points`
+      },
+      accessory: {
+        type: 'image',
+        image_url: `${players['1'].image}`,
+        alt_text: `${players['1'].name}`
+      }
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `* 2: ${players['2'].name}* :second_place_medal:\n got the second place with 2 points`
+      },
+      accessory: {
+        type: 'image',
+        image_url: `${players['2'].image}`,
+        alt_text: `${players['2'].name}`
+      }
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `* 3: ${players['3'].name}* :third_place_medal:\n got the third place with 1 points`
+      },
+      accessory: {
+        type: 'image',
+        image_url: `${players['3'].image}`,
+        alt_text: `${players['3'].name}`
+      }
+    }
+  ]
 }
