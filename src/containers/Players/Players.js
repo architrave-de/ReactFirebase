@@ -16,7 +16,7 @@ export default class Players extends React.Component {
   componentDidMount() {
     const self = this
     apiCall.players
-      .orderBy('name', 'asc')
+      .orderBy('totalPoints', 'desc')
       .get()
       .then(querySnapshot => {
         let players = []
@@ -39,10 +39,11 @@ export default class Players extends React.Component {
         <Container>
           <Row>
             <Col md={{ span: 10, offset: 1 }}>
+              <h4>Total players {players.length}</h4>
               <Table striped bordered hover variant="dark">
                 <thead>
                   <tr>
-                    <th>ID</th>
+                    <th>Total points</th>
                     <th>Name</th>
                     <th>email</th>
                     <th>Slack name</th>
@@ -51,7 +52,7 @@ export default class Players extends React.Component {
                 <tbody>
                   {players.map((player, i) => (
                     <tr key={i}>
-                      <td>{player.id}</td>
+                      <td>{player.totalPoints}</td>
                       <td>{player.name}</td>
                       <td>{player.email}</td>
                       <td>{player.slackName}</td>
