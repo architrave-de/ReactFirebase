@@ -14,6 +14,7 @@ import firebase from 'firebase/app'
 import 'firebaseui/dist/firebaseui.css'
 import Spinner from 'react-bootstrap/Spinner'
 import { firebaseUiConfig } from '../../helpers/firebase'
+import SlackFeatures from './SlackFeauters/SlackFeatures'
 import LoginInfos from './LoginOptions/LoginInInfos'
 
 export default class ControlPanel extends React.Component {
@@ -24,6 +25,7 @@ export default class ControlPanel extends React.Component {
       loading: true,
       isUserLoggedIn: true,
       lastPlayerId: null,
+      currentUser: '',
       playerFields: {
         name: {
           name: 'name',
@@ -77,9 +79,13 @@ export default class ControlPanel extends React.Component {
     const self = this
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-        self.setState({
-          loading: false,
-          isUserLogged: true
+        console.log('TCL: ControlPanel -> showLoginOptions -> user', user)
+        apiCall.playerByEmail({ email: user.email }).then(user => {
+          self.setState({
+            loading: false,
+            isUserLogged: true,
+            currentUser: user
+          })
         })
         const { email } = user
         const emailDomain = email.substring(email.lastIndexOf('@') + 1)
@@ -110,7 +116,8 @@ export default class ControlPanel extends React.Component {
         self.setState({
           loading: true,
           isUserLogged: false,
-          errMessage: errMessage
+          errMessage: errMessage || null,
+          currentUser: null
         })
         self.showLoginOptions({ uiExists: true })
       })
@@ -123,13 +130,11 @@ export default class ControlPanel extends React.Component {
     for (let item in this.state.playerFields) {
       playerInfo[item] = form.get(item)
     }
-    apiCall
-      .addPlayer({ ...playerInfo, id: this.state.lastPlayerId.toString() })
-      .then(data => {})
+    apiCall.addPlayer({ ...playerInfo }).then(data => {})
   }
 
   render() {
-    const { playerFields, isUserLogged, loading } = this.state
+    const { playerFields, isUserLogged, loading, currentUser } = this.state
     const addPlayerForm = () => {
       return (
         <Form onSubmit={this.handleAddPlayer}>
@@ -153,14 +158,18 @@ export default class ControlPanel extends React.Component {
           <Col md={{ span: 10, offset: 1 }}>
             {isUserLogged ? (
               <>
-                <Button variant="primary" onClick={this.handleSignOut}>
-                  sign out
-                </Button>
-                <AddRound />
+                <LoginInfos
+                  mainButtonAction={this.handleSignOut}
+                  user={currentUser}
+                />
+                <AddRound title="Add new round" user={currentUser} />
+                <br />
+                <SlackFeatures title="Import Slack channel's users" />
+                <br />
                 <Accordion defaultActiveKey="0">
                   <Card>
                     <Accordion.Toggle as={Card.Header} eventKey="1">
-                      Add Player
+                      Add player manually
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="1">
                       <Card.Body>{addPlayerForm()}</Card.Body>
