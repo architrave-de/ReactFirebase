@@ -49,7 +49,9 @@ export default class CardsGroup extends React.Component {
           {rounds.length >= 1 ? (
             rounds.map((round, i) => (
               <div key={i}>
-                <Card.Title>{round.description}</Card.Title>
+                <Card.Title>
+                  <h5>{round.description}</h5>
+                </Card.Title>
                 <ul>
                   <li>{round.players && round.players[card.position].name}</li>
                 </ul>
