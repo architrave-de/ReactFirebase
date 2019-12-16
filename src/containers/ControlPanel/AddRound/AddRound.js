@@ -79,6 +79,14 @@ export default class AddRound extends React.Component {
           }
         })
       })
+      .then(data => {
+        const message = formattedSlackMessage({ round })
+        slackAction(sendMessageToChannel, {
+          channelName: 'test-bot-firebase',
+          text: round.description,
+          blocks: JSON.stringify(message)
+        })
+      })
       .catch(error => console.log('there is an error', error))
   }
 
