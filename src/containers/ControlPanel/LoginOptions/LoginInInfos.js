@@ -6,7 +6,7 @@ import React from 'react'
 export default function LoginInfos({
   mainButtonAction,
   title = 'Welcome!',
-  user
+  user = { name: 'user name' }
 }) {
   return (
     <Alert variant="secondary">
